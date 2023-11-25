@@ -7,11 +7,13 @@ TagManager:
   - Pickable
   - Picker
   - ground
+  - Feet
+  - Body
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Player
   - Water
   - UI
   - ground

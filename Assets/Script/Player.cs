@@ -35,16 +35,19 @@ public class Player : MonoBehaviour
     private SpriteRenderer sr;
     private bool jumpInput;
     private float x;
+    Animator anim;
 
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
+        anim = GetComponent<Animator>();
     }
     private void Update()
     {
-
+        Animate_Jump();
+        Animate_movement();
         FlipSprite();
         x = Input.GetAxisRaw("Horizontal");
         rb.velocity = new Vector2(x * speed, rb.velocity.y);
@@ -86,6 +89,10 @@ public class Player : MonoBehaviour
         {
             rb.gravityScale = gravityScale;
         }
+        if (rb.velocity.y <= 0.1f && rb.velocity.y >= -0.1f)
+        {
+            print("true");
+        }
     }
 
     private void FixedUpdate()
@@ -125,5 +132,45 @@ public class Player : MonoBehaviour
         {
             sr.flipX = true;
         }
+    }
+    private void Animate_movement()
+    {
+        if (rb.velocity.x != 0)
+        {
+            anim.SetBool("IsMoving", true);
+        }
+        else
+        {
+            anim.SetBool("IsMoving", false);
+
+        }
+    }
+    private void Animate_Jump()
+    {
+        if (rb.velocity.y > 0)
+        {
+            anim.SetBool("Jumping", true);
+            anim.SetBool("Up", true);
+        }
+        if (rb.velocity.y == 0 && !isGrounded)
+        {
+            anim.SetBool("Up", false);
+        }
+        else if (rb.velocity.y < 0)
+        {
+            anim.SetBool("Jumping", false);
+            anim.SetBool("Up", false);
+        }
+        if (isGrounded)
+        {
+            anim.SetBool("isGrounded", true);
+            anim.SetBool("Up", true);
+            anim.SetBool("Jumping", false);
+        }
+        else if (!isGrounded)
+        {
+            anim.SetBool("isGrounded", false);
+        }
+
     }
 }
