@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
@@ -37,18 +34,28 @@ public class Player : MonoBehaviour
     private float x;
     Animator anim;
 
+    [Header("Skill")]
+    public static bool useMagnet = false;
+    GameObject Magnet;
 
+    private void Awake()
+    {
+        Magnet = GameObject.Find("Magnet");
+    }
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
+        Magnet.SetActive(false);
+        
     }
     private void Update()
     {
         Animate_Jump();
         Animate_movement();
         FlipSprite();
+        ChangeAbility();
         x = Input.GetAxisRaw("Horizontal");
         rb.velocity = new Vector2(x * speed, rb.velocity.y);
 
@@ -62,13 +69,13 @@ public class Player : MonoBehaviour
             cayoteTimeLength -= Time.deltaTime;
         }
 
-        if (Input.GetKeyDown(KeyCode.Z))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             jumpBuffer = true;
             jumpBufferTimer = jumpBufferLength;
             jumpInput = true;
         }
-        if (Input.GetKeyUp(KeyCode.Z))
+        if (Input.GetKeyUp(KeyCode.Space))
         {
             if (rb.velocity.y > 0)
             {
@@ -172,5 +179,13 @@ public class Player : MonoBehaviour
             anim.SetBool("isGrounded", false);
         }
 
+    }
+    private void ChangeAbility()
+    {
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            useMagnet = true;
+            Magnet.SetActive(true);
+        }
     }
 }

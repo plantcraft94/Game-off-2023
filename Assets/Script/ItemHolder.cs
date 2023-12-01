@@ -5,6 +5,12 @@ using UnityEngine.Rendering.Universal;
 
 public class ItemHolder : MonoBehaviour
 {
+    public enum Flip
+    {
+        x,
+        y
+    }
+    public Flip flip;
     Camera cam;
     public Transform Hand;
     SpriteRenderer sr;
@@ -28,11 +34,17 @@ public class ItemHolder : MonoBehaviour
         float zRotation = Hand.rotation.eulerAngles.z;
         if (zRotation > 90 && zRotation < 270)
         {
-            sr.flipX = true;
+            if(flip == Flip.x)
+                sr.flipX = true;
+            else if (flip == Flip.y)
+                sr.flipY = true;
         }
         else
         {
-            sr.flipX = false;
+            if (flip == Flip.x)
+                sr.flipX = false;
+            else if (flip == Flip.y)
+                sr.flipY = false;
         }
         
 

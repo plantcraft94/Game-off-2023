@@ -1,13 +1,9 @@
 using System.Collections;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 
 public class PIckupObjectWithMouse : MonoBehaviour
 {
-    public GameObject MouseLocation;
     public Vector3 MousePos;
     Camera cam;
     public bool pickedUp = false;
@@ -21,23 +17,41 @@ public class PIckupObjectWithMouse : MonoBehaviour
     Vector2 MoveDirection;
     LineRenderer lineRenderer;
     Transform targetObject;
+    public float animationDur;
+    Vector3 EndPos;
+    Material material;
+    private Vector3 pos;
+    float gravityScaler;
+
+
     // Start is called before the first frame update
+    private void Awake()
+    {
+        targetObject = GameObject.Find("Magnet").transform;
+    }
     void Start()
     {
         cam = Camera.main;
         rb = GetComponent<Rigidbody2D>();
         lineRenderer = GetComponent<LineRenderer>();
         lineRenderer.enabled = false;
-        targetObject = GameObject.Find("Magnet").transform;
+        
+        material = GetComponent<SpriteRenderer>().material;
+        
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (Player.useMagnet == false)
+        {
+            return;
+        }
+        print(gravityScaler);
+        EndPos = transform.position;
         DrawLine();
         print(pickedUp);
         MousePos = cam.ScreenToWorldPoint(Input.mousePosition);
-        MouseLocation.transform.position = MousePos;
         Vector3 direction = (MousePos - transform.position).normalized;
         MoveDirection = direction;
         if (pickable)
@@ -45,24 +59,31 @@ public class PIckupObjectWithMouse : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.E) && !pickedUp)
             {
                 currentgravityscale = rb.gravityScale;
-                pickedUp = true;
                 lineRenderer.enabled = true;
+                StartCoroutine(AnimateLine());
+                Timer.Register(animationDur, () => pickedUp = true);
+                Timer.Register(animationDur, () => material.SetInt("_Boolean", 1));
+                gravityScaler = 0;
+
+
             }
             else if (Input.GetKeyDown(KeyCode.E) && pickedUp)
             {
                 pickedUp = false;
                 rb.freezeRotation = false;
-                rb.gravityScale = currentgravityscale;
+                rb.gravityScale = currentgravityscale + gravityScaler;
                 lineRenderer.enabled = false;
+                material.SetInt("_Boolean", 0);
+                pos = EndPos;
             }
 
         }
         if (pickedUp)
         {
             rb.freezeRotation = true;
-            rb.gravityScale = 0;
             if (moveable)
             {
+                rb.gravityScale = 0;
                 rb.velocity = Vector2.zero;
                 rb.velocity = new Vector2(MoveDirection.x, MoveDirection.y) * speed;
             }
@@ -84,11 +105,11 @@ public class PIckupObjectWithMouse : MonoBehaviour
             }
             if (Input.GetMouseButtonDown(0))
             {
-                rb.gravityScale += 1;
+                gravityScaler += 1f;
             }
-            else if (Input.GetMouseButtonDown(1))
+            if (Input.GetMouseButtonDown(1))
             {
-                rb.gravityScale -= 1;
+                gravityScaler -= 1f;
             }
         }
     }
@@ -97,6 +118,7 @@ public class PIckupObjectWithMouse : MonoBehaviour
         if (collision.gameObject.CompareTag("Feet"))
         {
             moveable = false;
+            rb.velocity = Vector2.zero;
         }
         if (collision.gameObject.CompareTag("Body"))
         {
@@ -117,7 +139,7 @@ public class PIckupObjectWithMouse : MonoBehaviour
         {
             moveable = false;
         }
-        if (collision.gameObject.CompareTag("Body"))
+        if (collision.gameObject.CompareTag("Body") && pickedUp)
         {
             collision.transform.parent.gameObject.GetComponent<Rigidbody2D>().mass = rb.mass * 1000;
         }
@@ -166,7 +188,22 @@ public class PIckupObjectWithMouse : MonoBehaviour
     void DrawLine()
     {
         // Set the positions of the LineRenderer
-        lineRenderer.SetPosition(0, transform.position); // Root object position
-        lineRenderer.SetPosition(1, targetObject.transform.position); // Target object position
+        lineRenderer.SetPosition(0, targetObject.transform.position); // Root object position
+        lineRenderer.SetPosition(1, transform.position); // Target object position
+    }
+    IEnumerator AnimateLine()
+    {
+        float startTime = Time.time;
+
+        Vector3 StartPos = lineRenderer.GetPosition(0);
+
+        pos = StartPos;
+        while(pos != EndPos)
+        {
+            float t = (Time.time - startTime) / animationDur;
+            pos = Vector3.Lerp(StartPos, EndPos, t);
+            lineRenderer.SetPosition(1, pos);
+            yield return null;
+        }
     }
 }
