@@ -27,20 +27,24 @@ public class Player : MonoBehaviour
 
 
     [Header("Variables")]
-    bool isGrounded;
+    public bool isGrounded;
     private Rigidbody2D rb;
     private SpriteRenderer sr;
     private bool jumpInput;
     private float x;
     Animator anim;
+    public bool flipped;
 
     [Header("Skill")]
     public static bool useMagnet = false;
     GameObject Magnet;
+    public static bool useLock = false;
+    GameObject Lock;
 
     private void Awake()
     {
         Magnet = GameObject.Find("Magnet");
+        Lock = GameObject.Find("Lock");
     }
     void Start()
     {
@@ -48,6 +52,7 @@ public class Player : MonoBehaviour
         sr = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
         Magnet.SetActive(false);
+        Lock.SetActive(false);
         
     }
     private void Update()
@@ -56,6 +61,7 @@ public class Player : MonoBehaviour
         Animate_movement();
         FlipSprite();
         ChangeAbility();
+        Visual();
         x = Input.GetAxisRaw("Horizontal");
         rb.velocity = new Vector2(x * speed, rb.velocity.y);
 
@@ -96,10 +102,6 @@ public class Player : MonoBehaviour
         {
             rb.gravityScale = gravityScale;
         }
-        if (rb.velocity.y <= 0.1f && rb.velocity.y >= -0.1f)
-        {
-            print("true");
-        }
     }
 
     private void FixedUpdate()
@@ -134,10 +136,20 @@ public class Player : MonoBehaviour
         if (x > 0)
         {
             sr.flipX = false;
+            
         }
         else if (x < 0)
         {
             sr.flipX = true;
+            
+        }
+        if (sr.flipX == true)
+        {
+            flipped = true;
+        }
+        else if (sr.flipX == false)
+        {
+            flipped = false;
         }
     }
     private void Animate_movement()
@@ -180,12 +192,36 @@ public class Player : MonoBehaviour
         }
 
     }
+    void Visual()
+    {
+        if (useMagnet == true)
+        {
+            Magnet.SetActive(true);
+        }
+        else if (useMagnet == false)
+        {
+            Magnet.SetActive(false);
+        }
+        if (useLock == true)
+        {
+            Lock.SetActive(true);
+        }
+        else if (useLock == false)
+        {
+            Lock.SetActive(false);
+        }
+    }
     private void ChangeAbility()
     {
         if (Input.GetKeyDown(KeyCode.Z))
         {
             useMagnet = true;
-            Magnet.SetActive(true);
+            useLock = false;
+        }
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            useLock = true;
+            useMagnet = false;
         }
     }
 }

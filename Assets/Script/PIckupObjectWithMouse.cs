@@ -8,7 +8,6 @@ public class PIckupObjectWithMouse : MonoBehaviour
     Camera cam;
     public bool pickedUp = false;
     Rigidbody2D rb;
-    public bool pickable = false;
     bool scaleable = true;
     public static int count = 0;
     bool moveable = true;
@@ -19,9 +18,11 @@ public class PIckupObjectWithMouse : MonoBehaviour
     Transform targetObject;
     public float animationDur;
     Vector3 EndPos;
-    Material material;
     private Vector3 pos;
     float gravityScaler;
+    Material material;
+
+    bool isRuneable;
 
 
     // Start is called before the first frame update
@@ -31,13 +32,12 @@ public class PIckupObjectWithMouse : MonoBehaviour
     }
     void Start()
     {
+        
         cam = Camera.main;
         rb = GetComponent<Rigidbody2D>();
         lineRenderer = GetComponent<LineRenderer>();
-        lineRenderer.enabled = false;
-        
-        material = GetComponent<SpriteRenderer>().material;
-        
+        lineRenderer.enabled = false;     
+        material = GetComponent<Renderer>().material;
     }
 
     // Update is called once per frame
@@ -45,16 +45,25 @@ public class PIckupObjectWithMouse : MonoBehaviour
     {
         if (Player.useMagnet == false)
         {
+            if (pickedUp)
+            {
+                pickedUp = false;
+                rb.freezeRotation = false;
+                rb.gravityScale = currentgravityscale + gravityScaler;
+                lineRenderer.enabled = false;
+                pos = EndPos;
+                isRuneable = GetComponent<Runeable>().isRuneable = false;
+                material.SetInt("_IsUseSkills", 0);
+            }
             return;
         }
-        print(gravityScaler);
+        isRuneable = GetComponent<Runeable>().isRuneable;
         EndPos = transform.position;
         DrawLine();
-        print(pickedUp);
         MousePos = cam.ScreenToWorldPoint(Input.mousePosition);
         Vector3 direction = (MousePos - transform.position).normalized;
         MoveDirection = direction;
-        if (pickable)
+        if (isRuneable && !Stasis.isStasis)
         {
             if (Input.GetKeyDown(KeyCode.E) && !pickedUp)
             {
@@ -62,7 +71,7 @@ public class PIckupObjectWithMouse : MonoBehaviour
                 lineRenderer.enabled = true;
                 StartCoroutine(AnimateLine());
                 Timer.Register(animationDur, () => pickedUp = true);
-                Timer.Register(animationDur, () => material.SetInt("_Boolean", 1));
+                Timer.Register(animationDur, () => material.SetInt("_IsUseSkills", 1));
                 gravityScaler = 0;
 
 
@@ -73,8 +82,8 @@ public class PIckupObjectWithMouse : MonoBehaviour
                 rb.freezeRotation = false;
                 rb.gravityScale = currentgravityscale + gravityScaler;
                 lineRenderer.enabled = false;
-                material.SetInt("_Boolean", 0);
                 pos = EndPos;
+                material.SetInt("_IsUseSkills", 0);
             }
 
         }
@@ -127,10 +136,6 @@ public class PIckupObjectWithMouse : MonoBehaviour
                 collision.transform.parent.gameObject.GetComponent<Rigidbody2D>().mass = rb.mass * 1000;
             }
         }
-        if (collision.gameObject.CompareTag("Picker"))
-        {
-            pickable = true;
-        }
 
     }
     private void OnTriggerStay2D(Collider2D collision)
@@ -153,10 +158,6 @@ public class PIckupObjectWithMouse : MonoBehaviour
         if (collision.gameObject.CompareTag("Body"))
         {
             collision.transform.parent.gameObject.GetComponent<Rigidbody2D>().mass = 1f;
-        }
-        if (collision.gameObject.CompareTag("Picker"))
-        {
-            pickable = false;
         }
     }
     private void OnCollisionEnter2D(Collision2D collision)
