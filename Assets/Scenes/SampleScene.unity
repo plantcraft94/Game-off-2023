@@ -751,9 +751,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 0.055555556
-    width: 0.33333334
-    height: 0.3333333
+    y: 0
+    width: 1
+    height: 1
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 34
@@ -913,7 +913,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!50 &653447191
 Rigidbody2D:
   serializedVersion: 4
@@ -1065,7 +1065,7 @@ GameObject:
   - component: {fileID: 708279801}
   m_Layer: 2
   m_Name: HitBoxUp
-  m_TagString: Untagged
+  m_TagString: Sword
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2008,7 +2008,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!58 &1572954009
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -2630,6 +2630,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9218269620418986688, guid: b2508feee1b7cd446ae8a7bbffc26f50, type: 3}
+      propertyPath: Arrow
+      value: 
+      objectReference: {fileID: 5089704453018955680, guid: 862a8aec1c0f5974ba63f197d46375a9, type: 3}
+    - target: {fileID: 9218269620418986688, guid: b2508feee1b7cd446ae8a7bbffc26f50, type: 3}
       propertyPath: particlesCollision
       value: 
       objectReference: {fileID: 1634068189}
@@ -2773,7 +2777,7 @@ TrailRenderer:
   m_MinVertexDistance: 0.1
   m_MaskInteraction: 0
   m_Autodestruct: 0
-  m_Emitting: 1
+  m_Emitting: 0
   m_ApplyActiveColorSpace: 1
 --- !u!1001 &9212371027716844544
 PrefabInstance:
@@ -2783,6 +2787,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3458274387812185671, guid: 970f4608f0667d64daadadaab59ce9ac, type: 3}
+      propertyPath: m_UseDelaunayMesh
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3628885148774533853, guid: 970f4608f0667d64daadadaab59ce9ac, type: 3}
       propertyPath: m_FlipY
       value: 0
