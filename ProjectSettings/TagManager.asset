@@ -10,6 +10,8 @@ TagManager:
   - Feet
   - Body
   - Sword
+  - Pointer
+  - Segment
   layers:
   - Default
   - TransparentFX
@@ -20,14 +22,14 @@ TagManager:
   - ground
   - Pickable
   - ParticlesCollision
+  - abilityui
   - 
   - 
   - 
   - 
   - 
-  - 
-  - 
-  - 
+  - PostProcessing
+  - Focused
   - 
   - 
   - 

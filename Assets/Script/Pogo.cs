@@ -14,8 +14,8 @@ public class Pogo : MonoBehaviour
         if (collision.gameObject.CompareTag(Tags.T_Pickable))
         {
             print("poggoed");
-            PlayerRb.velocity = new Vector2(PlayerRb.velocity.x, 0f);
-            PlayerRb.velocity = new Vector2(PlayerRb.velocity.x, 20f);
+            PlayerRb.velocity = new Vector2(PlayerRb.velocity.y, 0f);
+            PlayerRb.velocity = new Vector2(PlayerRb.velocity.y, 20f);
         }
     }
 }

@@ -31,7 +31,6 @@ public class Stasis : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        print (pcount);
         if (Player.useLock == false)
         {
             return;
@@ -76,9 +75,9 @@ public class Stasis : MonoBehaviour
     {
         if (collision.CompareTag("Sword"))
         {
-            pointer.SetActive(true);
             if (isStasis)
             {
+                pointer.SetActive(true);
                 hitCount++;
                 Dir = (transform.position - collision.transform.parent.transform.position).normalized;
             }

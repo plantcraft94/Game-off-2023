@@ -59,8 +59,7 @@ public class Player : MonoBehaviour
     {
         Animate_Jump();
         Animate_movement();
-        FlipSprite();
-        ChangeAbility();
+        FlipSprite();    
         Visual();
         x = Input.GetAxisRaw("Horizontal");
         rb.velocity = new Vector2(x * speed, rb.velocity.y);
@@ -211,14 +210,14 @@ public class Player : MonoBehaviour
             Lock.SetActive(false);
         }
     }
-    private void ChangeAbility()
+    public void ChangeAbility(string AbilityName)
     {
-        if (Input.GetKeyDown(KeyCode.Z))
+        if (AbilityName == "Magnet")
         {
             useMagnet = true;
             useLock = false;
         }
-        if (Input.GetKeyDown(KeyCode.X))
+        if (AbilityName == "Stasis")
         {
             useLock = true;
             useMagnet = false;

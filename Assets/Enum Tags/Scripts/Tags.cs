@@ -13,4 +13,6 @@ public const string T_ground = @"ground";
 public const string T_Feet = @"Feet";
 public const string T_Body = @"Body";
 public const string T_Sword = @"Sword";
+public const string T_Pointer = @"Pointer";
+public const string T_Segment = @"Segment";
 }
