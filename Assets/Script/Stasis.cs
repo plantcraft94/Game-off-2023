@@ -15,7 +15,6 @@ public class Stasis : MonoBehaviour
     float hitCount = 0;
     public GameObject Arrow;
     GameObject pointer;
-    float Cooldown = 1f;
     int pcount = 0;
     // Start is called before the first frame update
     void Start()
@@ -31,7 +30,7 @@ public class Stasis : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Player.useLock == false)
+        if (Player.useStasis == false)
         {
             return;
         }
@@ -39,7 +38,7 @@ public class Stasis : MonoBehaviour
         if (isRuneable)
         {
             
-            if (Input.GetKeyDown(KeyCode.E) && !isStasis && !StasisPower.BlockStasis)
+            if (Input.GetKeyDown(KeyCode.E) && !isStasis && SkillCooldown.StasisCoolDown <= 0)
             {
                 pcount = 0;
                 StasisPower.BlockStasis = true;
@@ -57,14 +56,14 @@ public class Stasis : MonoBehaviour
             }
             else if (Input.GetKeyDown(KeyCode.E) && isStasis)
             {
-                StopCoroutine(StasisTime());
-
+                StopCoroutine(StartCoroutine(StasisTime()));
+                print("not corutine");
                 rb.bodyType = RigidbodyType2D.Dynamic;
                 material.SetInt("_IsUseSkills", 0);
                 isStasis = false;
                 EndParticles();
                 AddKinematicForce(Dir, 200f);
-                StartCoroutine(DelayStasis());
+                SkillCooldown.StasisCoolDown = 15f;
                 tr.emitting = true;
                 hitCount = 0;
                 Dir = Vector2.zero;
@@ -92,12 +91,13 @@ public class Stasis : MonoBehaviour
     IEnumerator StasisTime()
     {
         yield return new WaitForSeconds(5f);
+        print("corutine");
         rb.bodyType = RigidbodyType2D.Dynamic;
         material.SetInt("_IsUseSkills", 0);
         isStasis = false;
         AddKinematicForce(Dir, 200f);
         EndParticles();
-        StartCoroutine(DelayStasis());
+        SkillCooldown.StasisCoolDown = 15f;
         tr.emitting = true;
         hitCount = 0;
         Dir = Vector2.zero;
@@ -113,10 +113,5 @@ public class Stasis : MonoBehaviour
         particle.GetComponent<ParticleSystem>().Play();
         Destroy(particle, 1f);
         
-    }
-    IEnumerator DelayStasis()
-    {
-        yield return new WaitForSeconds(Cooldown);
-        StasisPower.BlockStasis = false;
     }
 }

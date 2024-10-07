@@ -15,4 +15,5 @@ public const string T_Body = @"Body";
 public const string T_Sword = @"Sword";
 public const string T_Pointer = @"Pointer";
 public const string T_Segment = @"Segment";
+public const string T_RemoteBomb = @"RemoteBomb";
 }

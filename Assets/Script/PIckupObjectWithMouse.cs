@@ -8,7 +8,6 @@ public class PIckupObjectWithMouse : MonoBehaviour
     Camera cam;
     public bool pickedUp = false;
     Rigidbody2D rb;
-    bool scaleable = true;
     public static int count = 0;
     bool moveable = true;
     float currentgravityscale;
@@ -23,6 +22,7 @@ public class PIckupObjectWithMouse : MonoBehaviour
     Material material;
 
     bool isRuneable;
+    Transform MousePosition;
 
 
     // Start is called before the first frame update
@@ -38,12 +38,13 @@ public class PIckupObjectWithMouse : MonoBehaviour
         lineRenderer = GetComponent<LineRenderer>();
         lineRenderer.enabled = false;     
         material = GetComponent<Renderer>().material;
+        MousePosition = GameObject.Find("MouseLocation").transform;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Player.useMagnet == false)
+        if (Player.isMagnet == false)
         {
             if (pickedUp)
             {
@@ -60,7 +61,7 @@ public class PIckupObjectWithMouse : MonoBehaviour
         isRuneable = GetComponent<Runeable>().isRuneable;
         EndPos = transform.position;
         DrawLine();
-        MousePos = cam.ScreenToWorldPoint(Input.mousePosition);
+        MousePos = MousePosition.position;
         Vector3 direction = (MousePos - transform.position).normalized;
         MoveDirection = direction;
         if (isRuneable && !Stasis.isStasis)
@@ -95,30 +96,6 @@ public class PIckupObjectWithMouse : MonoBehaviour
                 rb.gravityScale = 0;
                 rb.velocity = Vector2.zero;
                 rb.velocity = new Vector2(MoveDirection.x, MoveDirection.y) * speed;
-            }
-            if (Input.mouseScrollDelta.y > 0)
-            {
-                if (scaleable == false)
-                {
-                    return;
-                }
-                transform.localScale += new Vector3(0.5f ,0.5f ,0.5f);
-            }
-            if (Input.mouseScrollDelta.y < 0)
-            {
-                if (transform.localScale == new Vector3(0.5f, 0.5f, 0.5f))
-                {
-                    return;
-                }
-                transform.localScale += new Vector3(-0.5f, -0.5f, -0.5f);
-            }
-            if (Input.GetMouseButtonDown(0))
-            {
-                gravityScaler += 1f;
-            }
-            if (Input.GetMouseButtonDown(1))
-            {
-                gravityScaler -= 1f;
             }
         }
     }
@@ -160,27 +137,8 @@ public class PIckupObjectWithMouse : MonoBehaviour
             collision.transform.parent.gameObject.GetComponent<Rigidbody2D>().mass = 1f;
         }
     }
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("ground"))
-        {
-            count++;
-            if (count == 2)
-            {
-                scaleable = false;
-            }    
-        }
-    }
     private void OnCollisionExit2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("ground"))
-        {
-            count--;
-            if (count == 0)
-            {
-                scaleable = true;
-            }
-        }
         if (collision.gameObject.CompareTag("Player"))
         {
             moveable = true;

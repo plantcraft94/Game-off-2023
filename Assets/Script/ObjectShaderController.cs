@@ -23,7 +23,7 @@ public class ObjectShaderController : MonoBehaviour
             }
             material.SetInt("_IsUseMagnet", 1);
         }
-        else if (Player.useLock)
+        else if (Player.useStasis)
         {
             material.SetInt("_IsUseMagnet", 0);
         }           

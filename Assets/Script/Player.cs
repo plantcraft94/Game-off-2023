@@ -37,14 +37,25 @@ public class Player : MonoBehaviour
 
     [Header("Skill")]
     public static bool useMagnet = false;
+    public static bool isMagnet = false;
     GameObject Magnet;
-    public static bool useLock = false;
-    GameObject Lock;
+    public static bool useStasis = false;
+    public static bool isStasis = false;
+    GameObject Stasis;
+    public static bool useSquareBomb = false;
+    public static bool isSquareBomb = false;
+    GameObject SquareBomb;
+    public static bool useCircleBomb = false;
+    public static bool isCircleBomb = false;
+    GameObject CircleBomb;
+    public static bool isEnableSkills;
 
     private void Awake()
     {
         Magnet = GameObject.Find("Magnet");
-        Lock = GameObject.Find("Lock");
+        Stasis = GameObject.Find("Lock");
+        SquareBomb = GameObject.Find("PSquare_bomb");
+        CircleBomb = GameObject.Find("PRound_bomb");
     }
     void Start()
     {
@@ -52,15 +63,28 @@ public class Player : MonoBehaviour
         sr = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
         Magnet.SetActive(false);
-        Lock.SetActive(false);
+        Stasis.SetActive(false);
+        SquareBomb.SetActive(false);
+        CircleBomb.SetActive(false);
         
     }
     private void Update()
     {
         Animate_Jump();
         Animate_movement();
-        FlipSprite();    
-        Visual();
+        FlipSprite();
+        if (Input.GetMouseButtonDown(0))
+        {
+            isEnableSkills = false;
+            SwitchAbility();
+        }
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            isEnableSkills = true;
+            SwitchAbility();
+        }
+
+        UpdateVisuals();
         x = Input.GetAxisRaw("Horizontal");
         rb.velocity = new Vector2(x * speed, rb.velocity.y);
 
@@ -191,36 +215,72 @@ public class Player : MonoBehaviour
         }
 
     }
-    void Visual()
+    void SwitchAbility()
     {
-        if (useMagnet == true)
+        if (isMagnet)
         {
-            Magnet.SetActive(true);
+            SetAbility(Ability.Magnet);
         }
-        else if (useMagnet == false)
+        else if (isStasis && SkillCooldown.StasisCoolDown <= 0)
         {
-            Magnet.SetActive(false);
+            SetAbility(Ability.Stasis);
         }
-        if (useLock == true)
+        else if (isSquareBomb && SkillCooldown.SquareBombCoolDown <= 0)
         {
-            Lock.SetActive(true);
+            SetAbility(Ability.SquareBomb);
         }
-        else if (useLock == false)
+        else if (isCircleBomb && SkillCooldown.CircleBombCoolDown <= 0)
         {
-            Lock.SetActive(false);
+            SetAbility(Ability.CircleBomb);
         }
     }
-    public void ChangeAbility(string AbilityName)
+
+    void UpdateVisuals()
     {
-        if (AbilityName == "Magnet")
+        SetActive(Magnet, useMagnet);
+        SetActive(Stasis, useStasis && (SkillCooldown.StasisCoolDown <= 0 || StasisPower.StasisPowerActive) && !global::Stasis.isStasis);
+        SetActive(SquareBomb, useSquareBomb && SkillCooldown.SquareBombCoolDown <= 0 && BombSpawner.SquareBombCount <= 0);
+        SetActive(CircleBomb, useCircleBomb && SkillCooldown.CircleBombCoolDown <= 0 && BombSpawner.CircleBombCount <= 0);
+    }
+
+    void SetActive(GameObject abilityObject, bool active)
+    {
+        if (abilityObject != null)
         {
-            useMagnet = true;
-            useLock = false;
+            abilityObject.SetActive(active);
         }
-        if (AbilityName == "Stasis")
+    }
+
+    public void ChangeAbility(string abilityName)
+    {
+        Ability ability;
+        print(abilityName);
+        if (System.Enum.TryParse(abilityName, true, out ability))
         {
-            useLock = true;
-            useMagnet = false;
+            print(ability);
+            SetAbility(ability);
         }
+    }
+
+    void SetAbility(Ability ability)
+    {
+        print(ability == Ability.Magnet && isEnableSkills);
+        useMagnet = (ability == Ability.Magnet && isEnableSkills);
+        useStasis = (ability == Ability.Stasis && isEnableSkills);
+        useSquareBomb = (ability == Ability.SquareBomb && isEnableSkills && SkillCooldown.SquareBombCoolDown <= 0);
+        useCircleBomb = (ability == Ability.CircleBomb && isEnableSkills && SkillCooldown.CircleBombCoolDown <= 0);
+
+        isMagnet = (ability == Ability.Magnet);
+        isStasis = (ability == Ability.Stasis);
+        isSquareBomb = (ability == Ability.SquareBomb);
+        isCircleBomb = (ability == Ability.CircleBomb);
+    }
+
+    enum Ability
+    {
+        Magnet,
+        Stasis,
+        SquareBomb,
+        CircleBomb
     }
 }

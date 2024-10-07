@@ -12,6 +12,7 @@ TagManager:
   - Sword
   - Pointer
   - Segment
+  - RemoteBomb
   layers:
   - Default
   - TransparentFX
